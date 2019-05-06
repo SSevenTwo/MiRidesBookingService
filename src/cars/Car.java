@@ -187,7 +187,9 @@ public class Car
 		{
 			sb.append(String.format("%-15s %s\n", "Available:", "NO"));
 		}
-
+		
+		sb.append("\n"+ this.printExtras());
+		sb.append(this.printBookings());
 		return sb.toString();
 	}
 
@@ -206,11 +208,14 @@ public class Car
 		sb.append(":" + passengerCapacity);
 		if (available)
 		{
-			sb.append(":" + "YES");
+			sb.append(":" + "YES:");
 		} else
 		{
-			sb.append(":" + "NO");
+			sb.append(":" + "NO:");
 		}
+		
+		sb.append(this.printBookingFee());
+		sb.append(this.printBookingID());
 
 		return sb.toString();
 	}
@@ -356,7 +361,7 @@ public class Car
 	 */
 	private boolean dateIsValid(DateTime date)
 	{
-		return DateUtilities.dateIsNotInPast(date) && DateUtilities.dateIsNotMoreThan7Days(date);
+		return DateUtilities.dateIsNotInPast(date) && DateUtilities.dateIsNotMoreThanXDays(date, 7);
 	}
 
 	/*
@@ -425,5 +430,56 @@ public class Car
 		{
 			this.passengerCapacity = -1;
 		}
+	}
+	
+	public String printExtras() {
+		return "";
+	}
+	
+	public String printBookingFee() {
+		return ":" + this.STANDARD_BOOKING_FEE;
+	}
+	
+	public String printBookings() {
+		StringBuilder currentBookings = new StringBuilder();
+		if(this.hasBookings(this.currentBookings)) {
+			currentBookings.append("CURRENT BOOKINGS\n");
+			for(Booking book : this.currentBookings) {
+				if(book!=null) {
+					currentBookings.append(book.getDetails());
+				}
+			}
+		}
+		
+		StringBuilder pastBookings = new StringBuilder();
+		if(this.hasBookings(this.pastBookings)) {
+			currentBookings.append("PAST BOOKINGS\n");
+			for(Booking pBook : this.pastBookings) {
+				if(pBook != null) {
+					pastBookings.append(pBook.getDetails());
+				}
+			}
+		}
+		
+		return currentBookings.toString() + pastBookings.toString();
+	}
+	
+	public String printBookingID() {
+		StringBuilder sb = new StringBuilder();
+		if(this.hasBookings(this.currentBookings)) {
+			for(Booking book : this.currentBookings) {
+				if(book!=null) {
+					sb.append("|" + book.toString());
+				}
+			}
+		}
+		if(this.hasBookings(this.pastBookings)) {
+			for(Booking pBook : this.pastBookings) {
+				if(pBook != null) {
+					sb.append("|" + pBook.toString());
+				}
+			}
+		}
+		return sb.toString();
 	}
 }

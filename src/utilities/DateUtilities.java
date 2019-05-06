@@ -27,18 +27,18 @@ public class DateUtilities {
 		return false;
 	}
 	
-	public static boolean dateIsNotMoreThan7Days(DateTime date)
+	public static boolean dateIsNotMoreThanXDays(DateTime date, int x)
 	{
 		
-		boolean within7Days = false;
+		boolean withinXDays = false;
 		DateTime today = new DateTime();
-		DateTime nextWeek = new DateTime(7);
+		DateTime nextWeek = new DateTime(x);
 		
 		int daysInFuture = DateTime.diffDays(nextWeek, date);
-		if(daysInFuture >0 && daysInFuture <8)
+		if(daysInFuture >0 && daysInFuture <x+1)
 		{
-			within7Days = true;
+			withinXDays = true;
 		}
-		return within7Days;
+		return withinXDays;
 	}
 }

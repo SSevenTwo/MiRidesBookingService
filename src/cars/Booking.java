@@ -174,7 +174,7 @@ public class Booking {
 	 */
 	private void validateAndSetDate(DateTime date)
 	{
-		if(DateUtilities.dateIsNotInPast(date) && DateUtilities.dateIsNotMoreThan7Days(date))
+		if(DateUtilities.dateIsNotInPast(date) && DateUtilities.dateIsNotMoreThanXDays(date, 7))
 		{
 			dateBooked = date;
 		}

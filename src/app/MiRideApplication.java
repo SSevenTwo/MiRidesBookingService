@@ -1,6 +1,7 @@
 package app;
 
 import cars.Car;
+import cars.SilverServiceCar;
 import utilities.DateTime;
 import utilities.MiRidesUtilities;
 
@@ -230,6 +231,16 @@ public class MiRideApplication
 		DateTime inTwoDays = new DateTime(2);
 		rover.book("Rodney", "Cocker", inTwoDays, 3);
 		rover.completeBooking("Rodney", "Cocker", inTwoDays,75);
+		
+		//1 silver car with current booking and completed booking
+		Car zed = new SilverServiceCar("ROV465", "Honda", "Rover", "Jonathon Ryss Meyers", 7, 1.5, new String[3]);
+		cars[itemCount] = zed;
+		itemCount++;
+		zed.book("Rodney", "Cocker", new DateTime(1), 3);
+		//rover.completeBooking("Rodney", "Cocker", 75);
+		DateTime inThreeDays = new DateTime(3);
+		zed.book("Rodney", "Cocker", inThreeDays, 3);
+		zed.completeBooking("Rodney", "Cocker", inThreeDays,75);
 		return true;
 	}
 
