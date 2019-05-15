@@ -60,9 +60,8 @@ public class Menu
 					application.seedData();
 					break;
 				case "EX":
+					choice = "EX";
 					System.out.println("Exiting Program ... Goodbye!");
-					break;
-				case "TE":
 					break;
 				default:
 					System.out.println("Error, invalid option selected!");
@@ -96,7 +95,7 @@ public class Menu
 			driverName = console.nextLine();
 
 			System.out.print("Enter number of passengers: ");
-			numPassengers = Integer.parseInt(console.nextLine());
+			numPassengers = promptForPassengerNumbers();
 
 			boolean result = application.checkIfCarExists(id);
 
@@ -182,6 +181,7 @@ public class Menu
 			int year = Integer.parseInt(response.substring(6));
 			DateTime dateOfBooking = new DateTime(day, month, year);
 			result = application.completeBooking(firstName, lastName, dateOfBooking, kilometers);
+			System.out.println(result);
 		} else
 		{
 			
@@ -202,6 +202,36 @@ public class Menu
 			}
 		}
 		
+	}
+	
+	private int promptForPassengerNumbers()
+	{
+		int numPassengers = 0;
+		boolean validPassengerNumbers = false;
+		// By pass user input validation.
+		if (!testingWithValidation)
+		{
+			return Integer.parseInt(console.nextLine());
+		} 
+		else
+		{
+			while (!validPassengerNumbers)
+			{
+				numPassengers = Integer.parseInt(console.nextLine());
+
+				String validId = application.isValidPassengerCapacity(numPassengers);
+				if (validId.contains("Error:"))
+				{
+					System.out.println(validId);
+					System.out.println("Enter passenger capacity: ");
+					System.out.println("(or hit ENTER to exit)");
+				} else
+				{
+					validPassengerNumbers = true;
+				}
+			}
+			return numPassengers;
+		}
 	}
 
 	/*

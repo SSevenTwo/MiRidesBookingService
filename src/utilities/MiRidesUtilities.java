@@ -20,15 +20,17 @@ public class MiRidesUtilities
 			return "Error: The registration number should end with three numeric characters.";
 		}
 		return regNo;
-		// Regular expressions for validating the subcomponents of the registration number.
-		
-		
-		
-//		if(regNoLength == ID_LENGTH & letters & numbers)
-//		{
-//			return true;
-//		}
-//		return false;
 	}
 
+	public static String isPassengerCapacityValid(int passengerCapacity)
+	{
+		if(passengerCapacity > 0 && passengerCapacity < 10)
+		{
+			return "OK";
+		}
+		else
+		{
+			return "Error: Passenger capacity must be between 1 and 9.";
+		}
+	}
 }

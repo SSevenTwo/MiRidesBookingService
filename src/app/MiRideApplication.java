@@ -3,6 +3,7 @@ package app;
 import cars.Car;
 import cars.SilverServiceCar;
 import utilities.DateTime;
+import utilities.DateUtilities;
 import utilities.MiRidesUtilities;
 
 /*
@@ -47,7 +48,13 @@ public class MiRideApplication
 			{
 				if(!cars[i].isCarBookedOnDate(dateRequired))
 				{
-					numberOfAvailableCars++;
+					if(!(cars[i] instanceof SilverServiceCar)){
+						numberOfAvailableCars++;
+					}
+					else if (DateUtilities.dateIsNotMoreThanXDays(dateRequired, 3)) {
+						numberOfAvailableCars++;
+					}
+					
 				}
 			}
 		}
@@ -66,8 +73,14 @@ public class MiRideApplication
 			{
 				if(!cars[i].isCarBookedOnDate(dateRequired))
 				{
+					if(!(cars[i] instanceof SilverServiceCar)){
 					availableCars[availableCarsIndex] = availableCarsIndex + 1 + ". " + cars[i].getRegistrationNumber();
 					availableCarsIndex++;
+					}
+					else if(DateUtilities.dateIsNotMoreThanXDays(dateRequired, 3)){
+						availableCars[availableCarsIndex] = availableCarsIndex + 1 + ". " + cars[i].getRegistrationNumber();
+						availableCarsIndex++;
+					}
 				}
 			}
 		}
@@ -79,11 +92,19 @@ public class MiRideApplication
 		Car car = getCarById(registrationNumber);
 		if(car != null)
         {
-            car.book(firstName, lastName, required, numPassengers);
-		    String message = "Thank you for your booking. \n" + car.getDriverName() 
+			if(car.book(firstName, lastName, required, numPassengers))
+			{
+
+				String message = "Thank you for your booking. \n" + car.getDriverName() 
 		        + " will pick you up on " + required.getFormattedDate() + ". \n"
 				+ "Your booking reference is: " + car.getBookingID(firstName, lastName, required);
-		    return message;
+				return message;
+			}
+			else
+			{
+				String message = "Booking could not be completed.";
+				return message;
+			}
         }
         else{
             return "Car with registration number: " + registrationNumber + " was not found.";
@@ -99,11 +120,18 @@ public class MiRideApplication
 		{
 			if (cars[i] != null)
 			{
-				result = cars[i].completeBooking(firstName, lastName, dateOfBooking, kilometers);
-				if(!result.equals("Booking not found"))
+				if(cars[i].isCarBookedOnDate(dateOfBooking))
 				{
-					return result;
+					return cars[i].completeBooking(firstName, lastName, dateOfBooking, kilometers);
 				}
+//				else
+//				{
+//					
+//				}
+//				if(!result.equals("Booking not found"))
+//				{
+//					return result;
+//				}
 			}
 		}
 		return "Booking not found.";
@@ -162,7 +190,7 @@ public class MiRideApplication
 		{
 			return false;
 		}
-		return false;
+		return true;
 	}
 	public String displaySpecificCar(String regNo)
 	{
@@ -233,7 +261,7 @@ public class MiRideApplication
 		rover.completeBooking("Rodney", "Cocker", inTwoDays,75);
 		
 		//1 silver car with current booking and completed booking
-		Car zed = new SilverServiceCar("ROV465", "Honda", "Rover", "Jonathon Ryss Meyers", 7, 1.5, new String[3]);
+		Car zed = new SilverServiceCar("ZED321", "Honda", "Rover", "Jonathon Ryss Meyers", 7, 1.5, new String[3]);
 		cars[itemCount] = zed;
 		itemCount++;
 		zed.book("Rodney", "Cocker", new DateTime(1), 3);
@@ -274,6 +302,11 @@ public class MiRideApplication
 	public String isValidId(String id)
 	{
 		return MiRidesUtilities.isRegNoValid(id);
+	}
+	
+	public String isValidPassengerCapacity(int passengerNumber)
+	{
+		return MiRidesUtilities.isPassengerCapacityValid(passengerNumber);
 	}
 
 	public boolean checkIfCarExists(String regNo)

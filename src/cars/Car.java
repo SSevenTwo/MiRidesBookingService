@@ -1,7 +1,4 @@
 package cars;
-
-import java.util.ArrayList;
-
 import utilities.DateTime;
 import utilities.DateUtilities;
 import utilities.MiRidesUtilities;
@@ -9,7 +6,7 @@ import utilities.MiRidesUtilities;
 /*
  * Class:		Car
  * Description:	The class represents a car in a ride sharing system. 
- * Author:		Rodney Cocker
+ * Author:		Rodney Cockertru
  */
 public class Car
 {
@@ -173,22 +170,7 @@ public class Car
 	{
 		StringBuilder sb = new StringBuilder();
 
-		sb.append(getRecordMarker());
-		sb.append(String.format("%-15s %s\n", "Reg No:", regNo));
-		sb.append(String.format("%-15s %s\n", "Make & Model:", make + " " + model));
-
-		sb.append(String.format("%-15s %s\n", "Driver Name:", driverName));
-		sb.append(String.format("%-15s %s\n", "Capacity:", passengerCapacity));
-
-		if (available)
-		{
-			sb.append(String.format("%-15s %s\n", "Available:", "YES"));
-		} else
-		{
-			sb.append(String.format("%-15s %s\n", "Available:", "NO"));
-		}
-		
-		sb.append("\n"+ this.printExtras());
+		sb.append(this.getCarDetails() + "\n");
 		sb.append(this.printBookings());
 		return sb.toString();
 	}
@@ -206,14 +188,14 @@ public class Car
 			sb.append(":" + driverName);
 		}
 		sb.append(":" + passengerCapacity);
-		if (available)
+		if (bookingAvailable())
 		{
-			sb.append(":" + "YES:");
+			sb.append(":" + "YES");
 		} else
 		{
-			sb.append(":" + "NO:");
+			sb.append(":" + "NO");
 		}
-		
+	
 		sb.append(this.printBookingFee());
 		sb.append(this.printBookingID());
 
@@ -257,9 +239,11 @@ public class Car
 	 */
 	private String completeBooking(int bookingIndex, double kilometers)
 	{
+		tripFee = 0;
 		Booking booking = currentBookings[bookingIndex];
 		// Remove booking from current bookings array.
 		currentBookings[bookingIndex] = null;
+		bookingSpotAvailable = bookingIndex;
 
 		// call complete booking on Booking object
 		// double kilometersTravelled = Math.random()* 100;
@@ -277,6 +261,7 @@ public class Car
 		}
 		String result = String.format("Thank you for riding with MiRide.\nWe hope you enjoyed your trip.\n$"
 				+ "%.2f has been deducted from your account.", tripFee);
+		tripFee = 0;
 		return result;
 	}
 
@@ -374,6 +359,14 @@ public class Car
 		{
 			if (currentBookings[i] == null)
 			{
+				if(i == currentBookings.length - 1)
+				{
+					available = false;
+				}
+				else
+				{
+					available = true;
+				}
 				bookingSpotAvailable = i;
 				return true;
 			}
@@ -432,13 +425,6 @@ public class Car
 		}
 	}
 	
-	public String printExtras() {
-		return "";
-	}
-	
-	public String printBookingFee() {
-		return ":" + this.STANDARD_BOOKING_FEE;
-	}
 	
 	public String printBookings() {
 		StringBuilder currentBookings = new StringBuilder();
@@ -479,6 +465,30 @@ public class Car
 					sb.append("|" + pBook.toString());
 				}
 			}
+		}
+		return sb.toString();
+	}
+	
+	public String printBookingFee() {
+		return ":" + this.STANDARD_BOOKING_FEE;
+	}
+	
+	public String getCarDetails() {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append(getRecordMarker());
+		sb.append(String.format("%-15s %s\n", "Reg No:", regNo));
+		sb.append(String.format("%-15s %s\n", "Make & Model:", make + " " + model));
+
+		sb.append(String.format("%-15s %s\n", "Driver Name:", driverName));
+		sb.append(String.format("%-15s %s\n", "Capacity:", passengerCapacity));
+
+		if (bookingAvailable())
+		{
+			sb.append(String.format("%-15s %s\n", "Available:", "YES"));
+		} else
+		{
+			sb.append(String.format("%-15s %s\n", "Available:", "NO"));
 		}
 		return sb.toString();
 	}

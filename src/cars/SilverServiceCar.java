@@ -15,7 +15,7 @@ public class SilverServiceCar extends Car {
 		this.bookingFee = bookingFee;
 		this.refreshments = refreshments;		
 	}
-	
+
 	@Override
 	public boolean book(String firstName, String lastName, DateTime required, int numPassengers) {
 		if(DateUtilities.dateIsNotMoreThanXDays(required, 3) && DateUtilities.dateIsNotInPast(required)) {
@@ -25,15 +25,20 @@ public class SilverServiceCar extends Car {
 	}
 	
 	@Override
-	public String getDetails() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(super.getDetails());
-		return sb.toString();
-		
+	public String printBookingFee() {
+		return ":"+this.bookingFee+":"+"Item 1 Mints:Item 2 Orange Juice: Item 3 Chocolate Bar";
 	}
 	
 	@Override
-	public String printExtras() {
+	public String getDetails() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(super.getCarDetails() + "\n");
+		sb.append(this.printRefreshments());
+		sb.append(super.printBookings());
+		return sb.toString();
+	}
+
+	public String printRefreshments() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Refreshments Available\n");
 		sb.append(String.format("%-15s %s\n", "Item 1", "Mints"));
@@ -41,11 +46,4 @@ public class SilverServiceCar extends Car {
 		sb.append(String.format("%-15s %s\n\n", "Item 3", "Chocolate Bar"));
 		return sb.toString();
 	}
-	
-	@Override
-	public String printBookingFee() {
-		return ":"+this.bookingFee+":"+"Item 1 Mints:Item 2 Orange Juice: Item 3 Chocolate Bar";
-	}
-	
-	
 }
