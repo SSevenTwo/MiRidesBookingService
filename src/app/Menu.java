@@ -50,7 +50,7 @@ public class Menu
 					completeBooking();
 					break;
 				case "DA":
-					System.out.println(application.displayAllBookings());
+					this.displayAvailable();
 					break;
 				case "SS":
 					System.out.print("Enter Registration Number: ");
@@ -65,6 +65,9 @@ public class Menu
 				case "EX":
 					choice = "EX";
 					System.out.println("Exiting Program ... Goodbye!");
+					break;
+				case "TE":
+					application.createArrayOfRegNo();
 					break;
 				default:
 					System.out.println("Error, invalid option selected!");
@@ -302,6 +305,14 @@ public class Menu
         String delimiter = ",";
         refreshmentsArray = refreshments.split(delimiter);
         return refreshmentsArray;
+	}
+	
+	private void displayAvailable() {
+		System.out.print("Enter Type (SD/SS): ");
+		String serviceType = console.nextLine();
+		System.out.print("Enter Sort Type (A/D): ");
+		String sortType = console.nextLine();
+		System.out.println(application.displayAllBookings(serviceType, sortType));
 	}
 	
 	private void searchAvailableCars() {
