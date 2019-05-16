@@ -5,6 +5,8 @@ import cars.SilverServiceCar;
 import utilities.DateTime;
 import utilities.DateUtilities;
 import utilities.MiRidesUtilities;
+import java.io.*;
+import java.util.Scanner;
 
 /*
  * Class:			MiRideApplication
@@ -235,39 +237,38 @@ public class MiRideApplication {
 		DateTime inTwoDays = new DateTime(2);
 		rover.book("Rodney", "Cocker", inTwoDays, 3);
 		rover.completeBooking("Rodney", "Cocker", inTwoDays, 75);
-		
+
 		// 2 silver car that have not been booked
 		Car nyzmo = new SilverServiceCar("ARO121", "Nyzmo", "Sphere", "Johnny Gustyk", 4, 4.5,
-					new String[] { "Monster Energy", "Toilet Paper", "Banana" });
+				new String[] { "Monster Energy", "Toilet Paper", "Banana" });
 		cars[itemCount] = nyzmo;
 		itemCount++;
-		
-		Car lexo =  new SilverServiceCar("RIP331", "Nissan", "Lancer", "Josh Sammut", 4, 6.0,
-					new String[] { "Apple Juice", "Up N Go", "Grapes" });
+
+		Car lexo = new SilverServiceCar("RIP331", "Nissan", "Lancer", "Josh Sammut", 4, 6.0,
+				new String[] { "Apple Juice", "Up N Go", "Grapes" });
 		cars[itemCount] = lexo;
 		itemCount++;
-		
+
 		// 2 silver car that have been booked but not completed
 		Car zetsuga = new SilverServiceCar("PRO908", "Lucian", "Lulu", "Huy Tran", 7, 5.0,
-					new String[] { "HP Potion", "MP Potion", "SP Potion" });
+				new String[] { "HP Potion", "MP Potion", "SP Potion" });
 		cars[itemCount] = zetsuga;
 		itemCount++;
 		zetsuga.book("Joe", "Carbone", new DateTime(1), 5);
-		
+
 		Car emoli = new SilverServiceCar("EMU888", "Vespa", "Roadster", "Emily Nguyen", 2, 8.0,
 				new String[] { "Sting Energy", "FuzeTea", "Lollipop" });
 		cars[itemCount] = emoli;
 		itemCount++;
 		emoli.book("John", "Doe", new DateTime(1), 1);
-				
-		
+
 		// 2 silver car with completed booking
 		Car zed = new SilverServiceCar("ZED321", "Floop", "Rover", "Daniel Nguyen", 7, 5.0,
 				new String[] { "Chocolate", "5 Gum", "Pineapples" });
 		cars[itemCount] = zed;
 		itemCount++;
 		zed.book("Paul", "Millar", new DateTime(2), 3);
-		
+
 		Car jos = new SilverServiceCar("NOB541", "Walker", "Onfooteru", "Josiah Miranda", 4, 3.8,
 				new String[] { "Chocolate", "5 Gum", "Pineapples" });
 		cars[itemCount] = jos;
@@ -282,23 +283,23 @@ public class MiRideApplication {
 		if (itemCount == 0) {
 			return "No cars of this type have been added to the system.";
 		}
-		if(serviceType.equalsIgnoreCase("SD")) {
-			if(sortType.equalsIgnoreCase("A")) {
+		if (serviceType.equalsIgnoreCase("SD")) {
+			if (sortType.equalsIgnoreCase("A")) {
 				String[] regNo = this.createArrayOfRegNo();
 				return this.sortSdSmallest(regNo);
 			}
-			if(sortType.equalsIgnoreCase("D")) {
+			if (sortType.equalsIgnoreCase("D")) {
 				String[] regNo = this.createArrayOfRegNo();
 				return this.sortSdBiggest(regNo);
 			}
 		}
-		
-		if(serviceType.equalsIgnoreCase("SS")) {
-			if(sortType.equalsIgnoreCase("A")) {
+
+		if (serviceType.equalsIgnoreCase("SS")) {
+			if (sortType.equalsIgnoreCase("A")) {
 				String[] regNo = this.createArrayOfRegNo();
 				return this.sortSsSmallest(regNo);
 			}
-			if(sortType.equalsIgnoreCase("D")) {
+			if (sortType.equalsIgnoreCase("D")) {
 				String[] regNo = this.createArrayOfRegNo();
 				return this.sortSsBiggest(regNo);
 			}
@@ -402,18 +403,18 @@ public class MiRideApplication {
 		}
 		return regNoArray;
 	}
-	
+
 	public String sortSdBiggest(String[] regNo) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("\nThe following cars are available.\n");
 		MiRidesUtilities.sortBig(regNo);
 		for (int i = 0; i < 15; i++) {
 			for (int j = 0; j < 15; j++) {
-				if(!(regNo[i]==null) &&!(cars[j]==null)) {
-				if (cars[j].getRegistrationNumber() == regNo[i] && !(cars[j] instanceof SilverServiceCar)) {
-					sb.append(cars[j].getDetails());
+				if (!(regNo[i] == null) && !(cars[j] == null)) {
+					if (cars[j].getRegistrationNumber() == regNo[i] && !(cars[j] instanceof SilverServiceCar)) {
+						sb.append(cars[j].getDetails());
+					}
 				}
-			}
 			}
 		}
 		return sb.toString();
@@ -425,16 +426,16 @@ public class MiRideApplication {
 		MiRidesUtilities.sort(regNo);
 		for (int i = 0; i < 15; i++) {
 			for (int j = 0; j < 15; j++) {
-				if(!(regNo[i]==null) &&!(cars[j]==null)) {
-				if (cars[j].getRegistrationNumber() == regNo[i] && !(cars[j] instanceof SilverServiceCar)) {
-					sb.append(cars[j].getDetails());
+				if (!(regNo[i] == null) && !(cars[j] == null)) {
+					if (cars[j].getRegistrationNumber() == regNo[i] && !(cars[j] instanceof SilverServiceCar)) {
+						sb.append(cars[j].getDetails());
+					}
 				}
-			}
 			}
 		}
 		return sb.toString();
 	}
-	
+
 	public String sortSsBiggest(String[] regNo) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("\nThe following cars are available.\n");
@@ -462,6 +463,100 @@ public class MiRideApplication {
 						sb.append(cars[j].getDetails());
 					}
 				}
+			}
+		}
+		return sb.toString();
+	}
+
+	public void saveData() {
+		String fileOne = "carData.txt";
+		String fileTwo = "carDataBackup.txt";
+		this.writeToFile(fileOne);
+		this.writeToFile(fileTwo);
+	}
+
+	public void writeToFile(String fileName) {
+		PrintWriter outputStream = null;
+		try {
+			outputStream = new PrintWriter(new FileOutputStream(fileName));
+			outputStream.write(saveSeed());
+
+		} catch (FileNotFoundException e) {
+			System.out.println("Nigger");
+		}
+		outputStream.close();
+	}
+
+	public String startUpLoad() {
+		String fileOne = "carData.txt";
+		String fileTwo = "carDataBackup.txt";
+		String a = "";
+		if (!this.loadFile(fileOne)) {
+			if (loadFile(fileTwo)) {
+				return "Backup data found and sucessfully loaded.";
+			} else {
+				a = "No data has been loaded.";
+			}
+		}
+		return a;
+	}
+
+	public boolean loadFile(String fileName) {
+		Scanner reader = null;
+		int i = 0;
+		String[] carInfo = new String[15];
+		String data;
+		try {
+			reader = new Scanner(new File(fileName));
+			reader.useDelimiter(":");
+		} catch (Exception e) {
+			System.out.println("Error: File not found!");
+			return false;
+		}
+
+		while (reader.hasNextLine()) {
+			data = reader.nextLine();
+			carInfo[i] = data;
+			i++;
+
+		}
+		reader.close();
+		this.makeLoadedCars(carInfo);
+		return true;
+	}
+
+	public void makeLoadedCars(String[] carInfo) {
+		Car temp;
+
+		for (String car : carInfo) {
+			if (car != null) {
+				String[] carVariables = car.split(":");
+				if (carVariables[0].equalsIgnoreCase("SDCAR")) {
+					temp = new Car(carVariables[1], carVariables[2], carVariables[3], carVariables[4],
+							Integer.parseInt(carVariables[5]));
+					this.cars[itemCount] = temp;
+					itemCount++;
+				} else if (carVariables[0].equalsIgnoreCase("SSCAR")) {
+					int noOfItems = carVariables.length - 8;
+					String[] refreshments = new String[noOfItems];
+					for (int i = 0, j = 8; i < refreshments.length; i++, j++) {
+						refreshments[i] = carVariables[j].substring(7);
+					}
+					temp = new SilverServiceCar(carVariables[1], carVariables[2], carVariables[3], carVariables[4],
+							Integer.parseInt(carVariables[5]), Double.parseDouble(carVariables[7]), refreshments);
+					this.cars[itemCount] = temp;
+					itemCount++;
+				}
+			}
+		}
+
+	}
+
+	public String saveSeed() {
+		StringBuilder sb = new StringBuilder();
+		for (Car car : cars) {
+			if (!(car == null)) {
+				sb.append(car.stringToSave() + "\n");
 			}
 		}
 		return sb.toString();

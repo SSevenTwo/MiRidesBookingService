@@ -9,8 +9,7 @@ import utilities.DateUtilities;
  * Description:	The class a menu and is used to interact with the user. 
  * Author:		Rodney Cocker
  */
-public class Menu
-{
+public class Menu {
 	private Scanner console = new Scanner(System.in);
 	private MiRideApplication application = new MiRideApplication();
 	// Allows me to turn validation on/off for testing business logic in the
@@ -20,26 +19,22 @@ public class Menu
 	/*
 	 * Runs the menu in a loop until the user decides to exit the system.
 	 */
-	public void run()
-	{
+	public void run() {
 		final int MENU_ITEM_LENGTH = 2;
 		String input;
 		String choice = "";
-		do
-		{
+		System.out.println(application.startUpLoad());
+		do {
 			printMenu();
 
 			input = console.nextLine().toUpperCase();
 
-			if (input.length() != MENU_ITEM_LENGTH)
-			{
+			if (input.length() != MENU_ITEM_LENGTH) {
 				System.out.println("Error - selection must be two characters!");
-			} else
-			{
+			} else {
 				System.out.println();
 
-				switch (input)
-				{
+				switch (input) {
 				case "CC":
 					createCar();
 					break;
@@ -64,10 +59,8 @@ public class Menu
 					break;
 				case "EX":
 					choice = "EX";
+					application.saveData();
 					System.out.println("Exiting Program ... Goodbye!");
-					break;
-				case "TE":
-					application.createArrayOfRegNo();
 					break;
 				default:
 					System.out.println("Error, invalid option selected!");
@@ -81,15 +74,13 @@ public class Menu
 	/*
 	 * Creates cars for use in the system available or booking.
 	 */
-	private void createCar()
-	{
+	private void createCar() {
 		String id = "", make, model, driverName, serviceType;
 		int numPassengers = 0;
 
 		System.out.print("Enter registration number: ");
 		id = promptUserForRegNo();
-		if (id.length() != 0)
-		{
+		if (id.length() != 0) {
 			// Get details required for creating a car.
 			System.out.print("Enter Make: ");
 			make = console.nextLine();
@@ -102,27 +93,24 @@ public class Menu
 
 			System.out.print("Enter number of passengers: ");
 			numPassengers = promptForPassengerNumbers();
-			
+
 			System.out.print("Enter service type: ");
 			serviceType = console.nextLine();
 
 			boolean result = application.checkIfCarExists(id);
 
-			if (!result && serviceType.equalsIgnoreCase("SD"))
-			{
+			if (!result && serviceType.equalsIgnoreCase("SD")) {
 				String carRegistrationNumber = application.createCar(id, make, model, driverName, numPassengers);
 				System.out.println(carRegistrationNumber);
-			} 
-			else if(!result && serviceType.equalsIgnoreCase("SS")) {
+			} else if (!result && serviceType.equalsIgnoreCase("SS")) {
 				System.out.print("Enter Standard Fee: ");
 				double bookingFee = Double.parseDouble(console.nextLine());
 				System.out.print("Enter List of Refreshments: ");
 				String[] refreshments = this.promptForRefreshments();
-				String carRegistrationNumber = application.createSSCar(id, make, model, driverName, numPassengers, bookingFee, refreshments);
+				String carRegistrationNumber = application.createSSCar(id, make, model, driverName, numPassengers,
+						bookingFee, refreshments);
 				System.out.println(carRegistrationNumber);
-			}
-			else
-			{
+			} else {
 				System.out.println("Error - Already exists in the system");
 			}
 		}
@@ -131,8 +119,7 @@ public class Menu
 	/*
 	 * Book a car by finding available cars for a specified date.
 	 */
-	private boolean book()
-	{
+	private boolean book() {
 		System.out.println("Enter date car required: ");
 		System.out.println("format DD/MM/YYYY)");
 		String dateEntered = console.nextLine();
@@ -140,24 +127,20 @@ public class Menu
 		int month = Integer.parseInt(dateEntered.substring(3, 5));
 		int year = Integer.parseInt(dateEntered.substring(6));
 		DateTime dateRequired = new DateTime(day, month, year);
-		
-		if(!DateUtilities.dateIsNotInPast(dateRequired) || !DateUtilities.dateIsNotMoreThanXDays(dateRequired,7))
-		{
+
+		if (!DateUtilities.dateIsNotInPast(dateRequired) || !DateUtilities.dateIsNotMoreThanXDays(dateRequired, 7)) {
 			System.out.println("Date is invalid, must be within the coming week.");
 			return false;
 		}
-		
-		
+
 		String[] availableCars = application.book(dateRequired);
-		for (int i = 0; i < availableCars.length; i++)
-		{
+		for (int i = 0; i < availableCars.length; i++) {
 			System.out.println(availableCars[i]);
 		}
-		if (availableCars.length != 0)
-		{
+		if (availableCars.length != 0) {
 			System.out.println("Please enter a number from the list:");
 			int itemSelected = Integer.parseInt(console.nextLine());
-			
+
 			String regNo = availableCars[itemSelected - 1];
 			regNo = regNo.substring(regNo.length() - 6);
 			System.out.println("Please enter your first name:");
@@ -169,25 +152,22 @@ public class Menu
 			String result = application.book(firstName, lastName, dateRequired, numPassengers, regNo);
 
 			System.out.println(result);
-		} else
-		{
+		} else {
 			System.out.println("There are no available cars on this date.");
 		}
 		return true;
 	}
-	
+
 	/*
 	 * Complete bookings found by either registration number or booking date.
 	 */
-	private void completeBooking()
-	{
+	private void completeBooking() {
 		System.out.print("Enter Registration or Booking Date:");
 		String response = console.nextLine();
-		
+
 		String result;
 		// User entered a booking date
-		if (response.contains("/"))
-		{
+		if (response.contains("/")) {
 			System.out.print("Enter First Name:");
 			String firstName = console.nextLine();
 			System.out.print("Enter Last Name:");
@@ -200,51 +180,40 @@ public class Menu
 			DateTime dateOfBooking = new DateTime(day, month, year);
 			result = application.completeBooking(firstName, lastName, dateOfBooking, kilometers);
 			System.out.println(result);
-		} else
-		{
-			
+		} else {
+
 			System.out.print("Enter First Name:");
 			String firstName = console.nextLine();
 			System.out.print("Enter Last Name:");
 			String lastName = console.nextLine();
-			if(application.getBookingByName(firstName, lastName, response))
-			{
+			if (application.getBookingByName(firstName, lastName, response)) {
 				System.out.print("Enter kilometers:");
 				double kilometers = Double.parseDouble(console.nextLine());
 				result = application.completeBooking(firstName, lastName, response, kilometers);
 				System.out.println(result);
-			}
-			else
-			{
+			} else {
 				System.out.println("Error: Booking not found.");
 			}
 		}
-		
+
 	}
-	
-	private int promptForPassengerNumbers()
-	{
+
+	private int promptForPassengerNumbers() {
 		int numPassengers = 0;
 		boolean validPassengerNumbers = false;
 		// By pass user input validation.
-		if (!testingWithValidation)
-		{
+		if (!testingWithValidation) {
 			return Integer.parseInt(console.nextLine());
-		} 
-		else
-		{
-			while (!validPassengerNumbers)
-			{
+		} else {
+			while (!validPassengerNumbers) {
 				numPassengers = Integer.parseInt(console.nextLine());
 
 				String validId = application.isValidPassengerCapacity(numPassengers);
-				if (validId.contains("Error:"))
-				{
+				if (validId.contains("Error:")) {
 					System.out.println(validId);
 					System.out.println("Enter passenger capacity: ");
 					System.out.println("(or hit ENTER to exit)");
-				} else
-				{
+				} else {
 					validPassengerNumbers = true;
 				}
 			}
@@ -257,56 +226,47 @@ public class Menu
 	 * Boolean value for indicating test mode allows by passing validation to test
 	 * program without user input validation.
 	 */
-	private String promptUserForRegNo()
-	{
+	private String promptUserForRegNo() {
 		String regNo = "";
 		boolean validRegistrationNumber = false;
 		// By pass user input validation.
-		if (!testingWithValidation)
-		{
+		if (!testingWithValidation) {
 			return console.nextLine();
-		} 
-		else
-		{
-			while (!validRegistrationNumber)
-			{
+		} else {
+			while (!validRegistrationNumber) {
 				regNo = console.nextLine();
 				boolean exists = application.checkIfCarExists(regNo);
-				if(exists)
-				{
+				if (exists) {
 					// Empty string means the menu will not try to process
 					// the registration number
 					System.out.println("Error: Reg Number already exists");
 					return "";
 				}
-				if (regNo.length() == 0)
-				{
+				if (regNo.length() == 0) {
 					break;
 				}
 
 				String validId = application.isValidId(regNo);
-				if (validId.contains("Error:"))
-				{
+				if (validId.contains("Error:")) {
 					System.out.println(validId);
 					System.out.println("Enter registration number: ");
 					System.out.println("(or hit ENTER to exit)");
-				} else
-				{
+				} else {
 					validRegistrationNumber = true;
 				}
 			}
 			return regNo;
 		}
 	}
-	
+
 	private String[] promptForRefreshments() {
 		String refreshments = console.nextLine();
-        String[] refreshmentsArray;
-        String delimiter = ",";
-        refreshmentsArray = refreshments.split(delimiter);
-        return refreshmentsArray;
+		String[] refreshmentsArray;
+		String delimiter = ",";
+		refreshmentsArray = refreshments.split(delimiter);
+		return refreshmentsArray;
 	}
-	
+
 	private void displayAvailable() {
 		System.out.print("Enter Type (SD/SS): ");
 		String serviceType = console.nextLine();
@@ -314,7 +274,7 @@ public class Menu
 		String sortType = console.nextLine();
 		System.out.println(application.displayAllBookings(serviceType, sortType));
 	}
-	
+
 	private void searchAvailableCars() {
 		System.out.print("Enter type (SD/SS): ");
 		String serviceType = console.nextLine();
@@ -331,8 +291,7 @@ public class Menu
 	/*
 	 * Prints the menu.
 	 */
-	private void printMenu()
-	{
+	private void printMenu() {
 		System.out.printf("\n********** MiRide System Menu **********\n\n");
 
 		System.out.printf("%-30s %s\n", "Create Car", "CC");

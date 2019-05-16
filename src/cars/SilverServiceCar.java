@@ -5,7 +5,7 @@ import utilities.DateUtilities;
 import utilities.MiRidesUtilities;
 
 public class SilverServiceCar extends Car {
-	
+
 	private double bookingFee;
 	private String[] refreshments;
 
@@ -13,22 +13,33 @@ public class SilverServiceCar extends Car {
 			double bookingFee, String[] refreshments) {
 		super(regNo, make, model, driverName, passengerCapacity);
 		this.bookingFee = bookingFee;
-		this.refreshments = refreshments;		
+		this.refreshments = refreshments;
 	}
 
 	@Override
 	public boolean book(String firstName, String lastName, DateTime required, int numPassengers) {
-		if(DateUtilities.dateIsNotMoreThanXDays(required, 3) && DateUtilities.dateIsNotInPast(required)) {
+		if (DateUtilities.dateIsNotMoreThanXDays(required, 3) && DateUtilities.dateIsNotInPast(required)) {
 			return super.book(firstName, lastName, required, numPassengers);
 		}
 		return false;
 	}
-	
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(this.carStringDetails());
+		sb.append(this.printBookingFee());
+		sb.append(this.printStringRefreshments());
+		sb.append(this.printBookingID());
+
+		return sb.toString();
+	}
+
 	@Override
 	public String printBookingFee() {
-		return ":"+this.bookingFee+":"+"Item 1 Mints:Item 2 Orange Juice: Item 3 Chocolate Bar";
+		return ":" + this.bookingFee + ":";
 	}
-	
+
 	@Override
 	public String getDetails() {
 		StringBuilder sb = new StringBuilder();
@@ -41,13 +52,35 @@ public class SilverServiceCar extends Car {
 	public String printRefreshments() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Refreshments Available\n");
-		//sb.append(String.format("%-15s %s\n", "Item 1", "Mints"));
-		//sb.append(String.format("%-15s %s\n", "Item 2", "Orange Juice"));
-		//sb.append(String.format("%-15s %s\n\n", "Item 3", "Chocolate Bar"));
+		// sb.append(String.format("%-15s %s\n", "Item 1", "Mints"));
+		// sb.append(String.format("%-15s %s\n", "Item 2", "Orange Juice"));
+		// sb.append(String.format("%-15s %s\n\n", "Item 3", "Chocolate Bar"));
 		for (int i = 0, j = 1; i < this.refreshments.length; i++, j++) {
-	       sb.append(String.format("%-15s %s\n", "Item " + j, refreshments[i]));
+			sb.append(String.format("%-15s %s\n", "Item " + j, refreshments[i]));
 		}
 		sb.append("\n");
+		return sb.toString();
+	}
+
+	public String printStringRefreshments() {
+		StringBuilder sb = new StringBuilder();
+		// sb.append(String.format("%-15s %s\n", "Item 1", "Mints"));
+		// sb.append(String.format("%-15s %s\n", "Item 2", "Orange Juice"));
+		// sb.append(String.format("%-15s %s\n\n", "Item 3", "Chocolate Bar"));
+		for (int i = 0, j = 1; i < this.refreshments.length; i++, j++) {
+			sb.append(String.format("%s %s:", "Item " + j, refreshments[i]));
+		}
+		return sb.toString();
+	}
+
+	@Override
+	public String stringToSave() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("SSCAR:");
+		sb.append(this.carStringDetails());
+		sb.append(this.printBookingFee());
+		sb.append(this.printStringRefreshments());
+
 		return sb.toString();
 	}
 }
