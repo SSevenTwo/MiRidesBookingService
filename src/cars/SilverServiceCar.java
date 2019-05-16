@@ -41,9 +41,13 @@ public class SilverServiceCar extends Car {
 	public String printRefreshments() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Refreshments Available\n");
-		sb.append(String.format("%-15s %s\n", "Item 1", "Mints"));
-		sb.append(String.format("%-15s %s\n", "Item 2", "Orange Juice"));
-		sb.append(String.format("%-15s %s\n\n", "Item 3", "Chocolate Bar"));
+		//sb.append(String.format("%-15s %s\n", "Item 1", "Mints"));
+		//sb.append(String.format("%-15s %s\n", "Item 2", "Orange Juice"));
+		//sb.append(String.format("%-15s %s\n\n", "Item 3", "Chocolate Bar"));
+		for (int i = 0, j = 1; i < this.refreshments.length; i++, j++) {
+	       sb.append(String.format("%-15s %s\n", "Item " + j, refreshments[i]));
+		}
+		sb.append("\n");
 		return sb.toString();
 	}
 }

@@ -56,6 +56,9 @@ public class Menu
 					System.out.print("Enter Registration Number: ");
 					System.out.println(application.displaySpecificCar(console.nextLine()));
 					break;
+				case "SA":
+					this.searchAvailableCars();
+					break;
 				case "SD":
 					application.seedData();
 					break;
@@ -77,7 +80,7 @@ public class Menu
 	 */
 	private void createCar()
 	{
-		String id = "", make, model, driverName;
+		String id = "", make, model, driverName, serviceType;
 		int numPassengers = 0;
 
 		System.out.print("Enter registration number: ");
@@ -96,14 +99,26 @@ public class Menu
 
 			System.out.print("Enter number of passengers: ");
 			numPassengers = promptForPassengerNumbers();
+			
+			System.out.print("Enter service type: ");
+			serviceType = console.nextLine();
 
 			boolean result = application.checkIfCarExists(id);
 
-			if (!result)
+			if (!result && serviceType.equalsIgnoreCase("SD"))
 			{
 				String carRegistrationNumber = application.createCar(id, make, model, driverName, numPassengers);
 				System.out.println(carRegistrationNumber);
-			} else
+			} 
+			else if(!result && serviceType.equalsIgnoreCase("SS")) {
+				System.out.print("Enter Standard Fee: ");
+				double bookingFee = Double.parseDouble(console.nextLine());
+				System.out.print("Enter List of Refreshments: ");
+				String[] refreshments = this.promptForRefreshments();
+				String carRegistrationNumber = application.createSSCar(id, make, model, driverName, numPassengers, bookingFee, refreshments);
+				System.out.println(carRegistrationNumber);
+			}
+			else
 			{
 				System.out.println("Error - Already exists in the system");
 			}
@@ -279,6 +294,27 @@ public class Menu
 			}
 			return regNo;
 		}
+	}
+	
+	private String[] promptForRefreshments() {
+		String refreshments = console.nextLine();
+        String[] refreshmentsArray;
+        String delimiter = ",";
+        refreshmentsArray = refreshments.split(delimiter);
+        return refreshmentsArray;
+	}
+	
+	private void searchAvailableCars() {
+		System.out.print("Enter type (SD/SS): ");
+		String serviceType = console.nextLine();
+		System.out.println("Date: ");
+		System.out.println("(format DD/MM/YYYY)");
+		String dateEntered = console.nextLine();
+		int day = Integer.parseInt(dateEntered.substring(0, 2));
+		int month = Integer.parseInt(dateEntered.substring(3, 5));
+		int year = Integer.parseInt(dateEntered.substring(6));
+		DateTime dateRequired = new DateTime(day, month, year);
+		System.out.println(application.searchAvailableCars(serviceType, dateRequired));
 	}
 
 	/*
