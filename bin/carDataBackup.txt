@@ -1,0 +1,12 @@
+SDCAR:SIM194:Honda:Accord Euro:Henry Cavill:5:YES:1.5:
+SDCAR:LEX666:Lexus:M1:Angela Landsbury:3:YES:1.5:
+SDCAR:BMW256:Mini:Minor:Barbara Streisand:4:YES:1.5:
+SDCAR:AUD765:Mazda:RX7:Matt Bomer:6:YES:1.5:
+SDCAR:TOY765:Toyota:Corola:Tina Turner:7:YES:1.5:
+SDCAR:ROV465:Honda:Rover:Jonathon Ryss Meyers:7:YES:1.5:
+SSCAR:ARO121:Nyzmo:Sphere:Johnny Gustyk:4:YES:4.5:Item 1 Monster Energy:Item 2 Toilet Paper:Item 3 Banana:
+SSCAR:RIP331:Nissan:Lancer:Josh Sammut:4:YES:6.0:Item 1 Apple Juice:Item 2 Up N Go:Item 3 Grapes:
+SSCAR:PRO908:Lucian:Lulu:Huy Tran:7:YES:5.0:Item 1 HP Potion:Item 2 MP Potion:Item 3 SP Potion:
+SSCAR:EMU888:Vespa:Roadster:Emily Nguyen:2:YES:8.0:Item 1 Sting Energy:Item 2 FuzeTea:Item 3 Lollipop:
+SSCAR:ZED321:Floop:Rover:Daniel Nguyen:7:YES:5.0:Item 1 Chocolate:Item 2 5 Gum:Item 3 Pineapples:
+SSCAR:NOB541:Walker:Onfooteru:Josiah Miranda:4:YES:3.8:Item 1 Chocolate:Item 2 5 Gum:Item 3 Pineapples:

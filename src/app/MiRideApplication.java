@@ -2,6 +2,11 @@ package app;
 
 import cars.Car;
 import cars.SilverServiceCar;
+import exceptions.InvalidBooking;
+import exceptions.InvalidBookingFee;
+import exceptions.InvalidDate;
+import exceptions.InvalidId;
+import exceptions.InvalidRefreshments;
 import utilities.DateTime;
 import utilities.DateUtilities;
 import utilities.MiRidesUtilities;
@@ -12,7 +17,7 @@ import java.util.Scanner;
  * Class:			MiRideApplication
  * Description:		The system manager the manages the 
  *              	collection of data. 
- * Author:			Rodney Cocker
+ * Author:			Ian Nguyen
  */
 public class MiRideApplication {
 	private Car[] cars = new Car[15];
@@ -23,7 +28,9 @@ public class MiRideApplication {
 		// seedData();
 	}
 
-	public String createCar(String id, String make, String model, String driverName, int numPassengers) {
+	// Create Standard Car
+	public String createCar(String id, String make, String model, String driverName, int numPassengers)
+			throws InvalidId {
 		String validId = isValidId(id);
 		if (isValidId(id).contains("Error:")) {
 			return validId;
@@ -36,8 +43,9 @@ public class MiRideApplication {
 		return "Error: Already exists in the system.";
 	}
 
+	// Create Silver Service Car
 	public String createSSCar(String id, String make, String model, String driverName, int numPassengers,
-			double bookingFee, String[] refreshments) {
+			double bookingFee, String[] refreshments) throws InvalidRefreshments, InvalidId, InvalidBookingFee {
 		String validId = isValidId(id);
 		if (isValidId(id).contains("Error:")) {
 			return validId;
@@ -51,7 +59,8 @@ public class MiRideApplication {
 		return "Error: Already exists in the system.";
 	}
 
-	public String[] book(DateTime dateRequired) {
+	// Returns an array of available cars on a given date
+	public String[] book(DateTime dateRequired) throws InvalidDate {
 		int numberOfAvailableCars = 0;
 		// finds number of available cars to determine the size of the array required.
 		for (int i = 0; i < cars.length; i++) {
@@ -92,8 +101,9 @@ public class MiRideApplication {
 		return availableCars;
 	}
 
+	// Books a car
 	public String book(String firstName, String lastName, DateTime required, int numPassengers,
-			String registrationNumber) {
+			String registrationNumber) throws InvalidBooking {
 		Car car = getCarById(registrationNumber);
 		if (car != null) {
 			if (car.book(firstName, lastName, required, numPassengers)) {
@@ -111,8 +121,9 @@ public class MiRideApplication {
 		}
 	}
 
-	public String completeBooking(String firstName, String lastName, DateTime dateOfBooking, double kilometers) {
-		String result = "";
+	// Completes a booking using a specific date.
+	public String completeBooking(String firstName, String lastName, DateTime dateOfBooking, double kilometers)
+			throws InvalidDate {
 
 		// Search all cars for bookings on a particular date.
 		for (int i = 0; i < cars.length; i++) {
@@ -120,19 +131,12 @@ public class MiRideApplication {
 				if (cars[i].isCarBookedOnDate(dateOfBooking)) {
 					return cars[i].completeBooking(firstName, lastName, dateOfBooking, kilometers);
 				}
-//				else
-//				{
-//					
-//				}
-//				if(!result.equals("Booking not found"))
-//				{
-//					return result;
-//				}
 			}
 		}
 		return "Booking not found.";
 	}
 
+	// Completes a booking using registration number and name.
 	public String completeBooking(String firstName, String lastName, String registrationNumber, double kilometers) {
 		String carNotFound = "Car not found";
 		Car car = null;
@@ -155,8 +159,8 @@ public class MiRideApplication {
 		return "Error: Booking not found.";
 	}
 
+	// Searches for a booking associated to a name.
 	public boolean getBookingByName(String firstName, String lastName, String registrationNumber) {
-		String bookingNotFound = "Error: Booking not found";
 		Car car = null;
 		// Search for car with registration number
 		for (int i = 0; i < cars.length; i++) {
@@ -177,6 +181,7 @@ public class MiRideApplication {
 		return true;
 	}
 
+	// Displays a specific car using registration number.
 	public String displaySpecificCar(String regNo) {
 		for (int i = 0; i < cars.length; i++) {
 			if (cars[i] != null) {
@@ -188,7 +193,8 @@ public class MiRideApplication {
 		return "Error: The car could not be located.";
 	}
 
-	public boolean seedData() {
+	// Seed data method
+	public boolean seedData() throws InvalidBooking, InvalidRefreshments, InvalidId, InvalidBookingFee {
 		for (int i = 0; i < cars.length; i++) {
 			if (cars[i] != null) {
 				return false;
@@ -225,8 +231,6 @@ public class MiRideApplication {
 		toyota.book("Alan", "Smith", new DateTime(3), 3);
 		toyota.book("Carmel", "Brownbill", new DateTime(4), 7);
 		toyota.book("Paul", "Scarlett", new DateTime(5), 7);
-		toyota.book("Paul", "Scarlett", new DateTime(6), 7);
-		toyota.book("Paul", "Scarlett", new DateTime(7), 7);
 
 		// 1 car booked five times (not available)
 		Car rover = new Car("ROV465", "Honda", "Rover", "Jonathon Ryss Meyers", 7);
@@ -279,6 +283,7 @@ public class MiRideApplication {
 		return true;
 	}
 
+	// Displays all cars of a specific type and sorts it accordingly.
 	public String displayAllBookings(String serviceType, String sortType) {
 		if (itemCount == 0) {
 			return "No cars of this type have been added to the system.";
@@ -307,6 +312,7 @@ public class MiRideApplication {
 		return "Error";
 	}
 
+	// Displays all bookings using a specfic ID.
 	public String displayBooking(String id, String seatId) {
 		Car booking = getCarById(id);
 		if (booking == null) {
@@ -315,14 +321,17 @@ public class MiRideApplication {
 		return booking.getDetails();
 	}
 
+	// Checks if RegNo is valid.
 	public String isValidId(String id) {
 		return MiRidesUtilities.isRegNoValid(id);
 	}
 
+	// Checks if Passenger Number is valid.
 	public String isValidPassengerCapacity(int passengerNumber) {
 		return MiRidesUtilities.isPassengerCapacityValid(passengerNumber);
 	}
 
+	// Checks if car exists.
 	public boolean checkIfCarExists(String regNo) {
 		Car car = null;
 		if (regNo.length() != 6) {
@@ -336,6 +345,7 @@ public class MiRideApplication {
 		}
 	}
 
+	// Get a specific car using regNo
 	private Car getCarById(String regNo) {
 		Car car = null;
 
@@ -350,7 +360,8 @@ public class MiRideApplication {
 		return car;
 	}
 
-	public String searchAvailableCars(String serviceType, DateTime dateRequired) {
+	// Search for available cars from given date and service type.
+	public String searchAvailableCars(String serviceType, DateTime dateRequired) throws InvalidDate {
 		StringBuilder sb = new StringBuilder();
 		boolean carFound = false;
 		if (serviceType.equalsIgnoreCase("SS")) {
@@ -394,6 +405,7 @@ public class MiRideApplication {
 		}
 	}
 
+	// Returns an array of registration numbers.
 	public String[] createArrayOfRegNo() {
 		String[] regNoArray = new String[15];
 		for (int i = 0; i < cars.length; i++) {
@@ -404,6 +416,7 @@ public class MiRideApplication {
 		return regNoArray;
 	}
 
+	// Sorts the standard cars from largest to smallest.
 	public String sortSdBiggest(String[] regNo) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("\nThe following cars are available.\n");
@@ -420,6 +433,7 @@ public class MiRideApplication {
 		return sb.toString();
 	}
 
+	// Sorts the standard cars from smallest to largest.
 	public String sortSdSmallest(String[] regNo) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("\nThe following cars are available.\n");
@@ -436,6 +450,7 @@ public class MiRideApplication {
 		return sb.toString();
 	}
 
+	// Sorts the Silver Service cars from largest to smallest.
 	public String sortSsBiggest(String[] regNo) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("\nThe following cars are available.\n");
@@ -452,6 +467,7 @@ public class MiRideApplication {
 		return sb.toString();
 	}
 
+	// Sorts the Silver Service cars from smallest to largest.
 	public String sortSsSmallest(String[] regNo) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("\nThe following cars are available.\n");
@@ -468,6 +484,7 @@ public class MiRideApplication {
 		return sb.toString();
 	}
 
+	// Method which initiates the saving of program data to the system.
 	public void saveData() {
 		String fileOne = "carData.txt";
 		String fileTwo = "carDataBackup.txt";
@@ -475,6 +492,7 @@ public class MiRideApplication {
 		this.writeToFile(fileTwo);
 	}
 
+	// Method which writes the car details into a file.
 	public void writeToFile(String fileName) {
 		PrintWriter outputStream = null;
 		try {
@@ -482,26 +500,36 @@ public class MiRideApplication {
 			outputStream.write(saveSeed());
 
 		} catch (FileNotFoundException e) {
-			System.out.println("Nigger");
+			System.out.println("Error - File was not found.");
 		}
 		outputStream.close();
 	}
 
-	public String startUpLoad() {
-		String fileOne = "carData.txt";
-		String fileTwo = "carDataBackup.txt";
-		String a = "";
-		if (!this.loadFile(fileOne)) {
-			if (loadFile(fileTwo)) {
-				return "Backup data found and sucessfully loaded.";
-			} else {
-				a = "No data has been loaded.";
+	// Method which returns a list of car details in toString format.
+	public String saveSeed() {
+		StringBuilder sb = new StringBuilder();
+		for (Car car : cars) {
+			if (!(car == null)) {
+				sb.append(car.stringToSave() + "\n");
 			}
+		}
+		return sb.toString();
+	}
+
+	// Initial start up method, that locates any saved local files and loads it into
+	// the program.
+	public String startUpLoad() throws InvalidRefreshments, NumberFormatException, InvalidId, InvalidBookingFee {
+		String a = "";
+		if (this.loadFile("carData.txt")) {
+			a = "Data sucessfully loaded.";
 		}
 		return a;
 	}
 
-	public boolean loadFile(String fileName) {
+	// Loads the local file into the system and creates information needed to make
+	// the saved cars.
+	public boolean loadFile(String fileName)
+			throws InvalidRefreshments, NumberFormatException, InvalidId, InvalidBookingFee {
 		Scanner reader = null;
 		int i = 0;
 		String[] carInfo = new String[15];
@@ -510,24 +538,28 @@ public class MiRideApplication {
 			reader = new Scanner(new File(fileName));
 			reader.useDelimiter(":");
 		} catch (Exception e) {
-			System.out.println("Error: File not found!");
-			return false;
+			try {
+				reader = new Scanner(new File("carDataBackup.txt"));
+				System.out.println("Backup data found.");
+			} catch (Exception z) {
+				System.out.println("No data was loaded.");
+				return false;
+			}
 		}
-
 		while (reader.hasNextLine()) {
 			data = reader.nextLine();
 			carInfo[i] = data;
 			i++;
-
 		}
 		reader.close();
 		this.makeLoadedCars(carInfo);
 		return true;
 	}
 
-	public void makeLoadedCars(String[] carInfo) {
+	// Creates the cars from the loaded files information.
+	public void makeLoadedCars(String[] carInfo)
+			throws InvalidRefreshments, NumberFormatException, InvalidId, InvalidBookingFee {
 		Car temp;
-
 		for (String car : carInfo) {
 			if (car != null) {
 				String[] carVariables = car.split(":");
@@ -550,15 +582,5 @@ public class MiRideApplication {
 			}
 		}
 
-	}
-
-	public String saveSeed() {
-		StringBuilder sb = new StringBuilder();
-		for (Car car : cars) {
-			if (!(car == null)) {
-				sb.append(car.stringToSave() + "\n");
-			}
-		}
-		return sb.toString();
 	}
 }

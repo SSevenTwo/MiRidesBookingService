@@ -1,13 +1,19 @@
 package app;
 
 import java.util.Scanner;
+
+import exceptions.InvalidBooking;
+import exceptions.InvalidBookingFee;
+import exceptions.InvalidDate;
+import exceptions.InvalidId;
+import exceptions.InvalidRefreshments;
 import utilities.DateTime;
 import utilities.DateUtilities;
 
 /*
  * Class:		Menu
  * Description:	The class a menu and is used to interact with the user. 
- * Author:		Rodney Cocker
+ * Author:		Ian Nguyen
  */
 public class Menu {
 	private Scanner console = new Scanner(System.in);
@@ -19,7 +25,7 @@ public class Menu {
 	/*
 	 * Runs the menu in a loop until the user decides to exit the system.
 	 */
-	public void run() {
+	public void run() throws InvalidBooking, InvalidRefreshments, InvalidId, InvalidDate, InvalidBookingFee {
 		final int MENU_ITEM_LENGTH = 2;
 		String input;
 		String choice = "";
@@ -74,7 +80,7 @@ public class Menu {
 	/*
 	 * Creates cars for use in the system available or booking.
 	 */
-	private void createCar() {
+	private void createCar() throws InvalidRefreshments, InvalidId, InvalidBookingFee {
 		String id = "", make, model, driverName, serviceType;
 		int numPassengers = 0;
 
@@ -91,8 +97,13 @@ public class Menu {
 			System.out.print("Enter Driver Name: ");
 			driverName = console.nextLine();
 
-			System.out.print("Enter number of passengers: ");
-			numPassengers = promptForPassengerNumbers();
+			try {
+				System.out.print("Enter number of passengers: ");
+				numPassengers = promptForPassengerNumbers();
+			} catch (NumberFormatException e) {
+				System.out.println("Error - Input is not a number.\\n");
+				return;
+			}
 
 			System.out.print("Enter service type: ");
 			serviceType = console.nextLine();
@@ -107,11 +118,25 @@ public class Menu {
 				double bookingFee = Double.parseDouble(console.nextLine());
 				System.out.print("Enter List of Refreshments: ");
 				String[] refreshments = this.promptForRefreshments();
-				String carRegistrationNumber = application.createSSCar(id, make, model, driverName, numPassengers,
-						bookingFee, refreshments);
-				System.out.println(carRegistrationNumber);
+				try {
+					String carRegistrationNumber = application.createSSCar(id, make, model, driverName, numPassengers,
+							bookingFee, refreshments);
+					System.out.println(carRegistrationNumber);
+				} catch (InvalidRefreshments e) {
+					System.out.print(e.getMessage());
+					return;
+				} catch (InvalidId e) {
+					System.out.print(e.getMessage());
+					return;
+				} catch (InvalidBookingFee e) {
+					System.out.print(e.getMessage());
+					return;
+				}
+
+			} else if (!serviceType.equalsIgnoreCase("SD") && !serviceType.equalsIgnoreCase("SS")) {
+				System.out.print("Error - Invalid service type.\n");
 			} else {
-				System.out.println("Error - Already exists in the system");
+				System.out.println("Error - Already exists in the system\\n");
 			}
 		}
 	}
@@ -119,41 +144,56 @@ public class Menu {
 	/*
 	 * Book a car by finding available cars for a specified date.
 	 */
-	private boolean book() {
+	private boolean book() throws InvalidBooking, InvalidDate {
 		System.out.println("Enter date car required: ");
-		System.out.println("format DD/MM/YYYY)");
-		String dateEntered = console.nextLine();
-		int day = Integer.parseInt(dateEntered.substring(0, 2));
-		int month = Integer.parseInt(dateEntered.substring(3, 5));
-		int year = Integer.parseInt(dateEntered.substring(6));
-		DateTime dateRequired = new DateTime(day, month, year);
+		System.out.println("(format DD/MM/YYYY)");
+		try {
+			String dateEntered = console.nextLine();
+			int day = Integer.parseInt(dateEntered.substring(0, 2));
+			int month = Integer.parseInt(dateEntered.substring(3, 5));
+			int year = Integer.parseInt(dateEntered.substring(6));
 
-		if (!DateUtilities.dateIsNotInPast(dateRequired) || !DateUtilities.dateIsNotMoreThanXDays(dateRequired, 7)) {
-			System.out.println("Date is invalid, must be within the coming week.");
+			DateTime dateRequired = new DateTime(day, month, year);
+
+			if (!DateUtilities.dateIsNotInPast(dateRequired)
+					|| !DateUtilities.dateIsNotMoreThanXDays(dateRequired, 7)) {
+				System.out.println("Date is invalid, must be within the coming week.");
+				return false;
+			}
+
+			String[] availableCars = application.book(dateRequired);
+			for (int i = 0; i < availableCars.length; i++) {
+				System.out.println(availableCars[i]);
+			}
+			if (availableCars.length != 0) {
+				System.out.println("Please enter a number from the list:");
+				int itemSelected = Integer.parseInt(console.nextLine());
+
+				String regNo = availableCars[itemSelected - 1];
+				regNo = regNo.substring(regNo.length() - 6);
+				System.out.println("Please enter your first name:");
+				String firstName = console.nextLine();
+				System.out.println("Please enter your last name:");
+				String lastName = console.nextLine();
+				System.out.println("Please enter the number of passengers:");
+				int numPassengers = Integer.parseInt(console.nextLine());
+				try {
+					String result = application.book(firstName, lastName, dateRequired, numPassengers, regNo);
+					System.out.println(result);
+				} catch (InvalidBooking e) {
+					System.out.println(e.getMessage());
+					return false;
+				}
+
+			} else {
+				System.out.println("There are no available cars on this date.");
+			}
+		} catch (NumberFormatException e) {
+			System.out.println(e.getMessage() + "\n");
 			return false;
-		}
-
-		String[] availableCars = application.book(dateRequired);
-		for (int i = 0; i < availableCars.length; i++) {
-			System.out.println(availableCars[i]);
-		}
-		if (availableCars.length != 0) {
-			System.out.println("Please enter a number from the list:");
-			int itemSelected = Integer.parseInt(console.nextLine());
-
-			String regNo = availableCars[itemSelected - 1];
-			regNo = regNo.substring(regNo.length() - 6);
-			System.out.println("Please enter your first name:");
-			String firstName = console.nextLine();
-			System.out.println("Please enter your last name:");
-			String lastName = console.nextLine();
-			System.out.println("Please enter the number of passengers:");
-			int numPassengers = Integer.parseInt(console.nextLine());
-			String result = application.book(firstName, lastName, dateRequired, numPassengers, regNo);
-
-			System.out.println(result);
-		} else {
-			System.out.println("There are no available cars on this date.");
+		} catch (InvalidDate e) {
+			System.out.println(e.getMessage() + "\n");
+			return false;
 		}
 		return true;
 	}
@@ -161,7 +201,7 @@ public class Menu {
 	/*
 	 * Complete bookings found by either registration number or booking date.
 	 */
-	private void completeBooking() {
+	private void completeBooking() throws InvalidDate {
 		System.out.print("Enter Registration or Booking Date:");
 		String response = console.nextLine();
 
@@ -178,8 +218,12 @@ public class Menu {
 			int month = Integer.parseInt(response.substring(3, 5));
 			int year = Integer.parseInt(response.substring(6));
 			DateTime dateOfBooking = new DateTime(day, month, year);
-			result = application.completeBooking(firstName, lastName, dateOfBooking, kilometers);
-			System.out.println(result);
+			try {
+				result = application.completeBooking(firstName, lastName, dateOfBooking, kilometers);
+				System.out.println(result);
+			} catch (InvalidDate e) {
+				System.out.println(e.getMessage() + "\n");
+			}
 		} else {
 
 			System.out.print("Enter First Name:");
@@ -259,14 +303,17 @@ public class Menu {
 		}
 	}
 
+	// Prompts user to enter in refreshments for the silver service car
 	private String[] promptForRefreshments() {
 		String refreshments = console.nextLine();
+		refreshments = refreshments.replaceAll("\\s", "");
 		String[] refreshmentsArray;
 		String delimiter = ",";
 		refreshmentsArray = refreshments.split(delimiter);
 		return refreshmentsArray;
 	}
 
+	// Displays all the cars of a certain type and sorted.
 	private void displayAvailable() {
 		System.out.print("Enter Type (SD/SS): ");
 		String serviceType = console.nextLine();
@@ -275,17 +322,28 @@ public class Menu {
 		System.out.println(application.displayAllBookings(serviceType, sortType));
 	}
 
-	private void searchAvailableCars() {
+	// Displays all available cars at a given date.
+	private void searchAvailableCars() throws InvalidDate {
 		System.out.print("Enter type (SD/SS): ");
 		String serviceType = console.nextLine();
-		System.out.println("Date: ");
-		System.out.println("(format DD/MM/YYYY)");
-		String dateEntered = console.nextLine();
-		int day = Integer.parseInt(dateEntered.substring(0, 2));
-		int month = Integer.parseInt(dateEntered.substring(3, 5));
-		int year = Integer.parseInt(dateEntered.substring(6));
-		DateTime dateRequired = new DateTime(day, month, year);
-		System.out.println(application.searchAvailableCars(serviceType, dateRequired));
+		if (!serviceType.equalsIgnoreCase("SD") && !serviceType.equalsIgnoreCase("SS")) {
+			System.out.print("Error - Invalid service type.\n");
+			return;
+		}
+		try {
+			System.out.println("Date: ");
+			System.out.println("(format DD/MM/YYYY)");
+			String dateEntered = console.nextLine();
+			int day = Integer.parseInt(dateEntered.substring(0, 2));
+			int month = Integer.parseInt(dateEntered.substring(3, 5));
+			int year = Integer.parseInt(dateEntered.substring(6));
+			DateTime dateRequired = new DateTime(day, month, year);
+			System.out.println(application.searchAvailableCars(serviceType, dateRequired));
+		} catch (NumberFormatException e) {
+			System.out.println("Error - Date entered is invalid.");
+		} catch (InvalidDate e) {
+			System.out.println(e.getMessage());
+		}
 	}
 
 	/*

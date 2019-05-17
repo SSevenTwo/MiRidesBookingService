@@ -1,7 +1,5 @@
 package utilities;
 
-import java.util.Arrays;
-
 public class MiRidesUtilities {
 	private final static int ID_LENGTH = 6;
 

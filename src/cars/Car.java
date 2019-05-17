@@ -1,6 +1,8 @@
 package cars;
 
 import exceptions.InvalidBooking;
+import exceptions.InvalidDate;
+import exceptions.InvalidId;
 import utilities.DateTime;
 import utilities.DateUtilities;
 import utilities.MiRidesUtilities;
@@ -8,7 +10,7 @@ import utilities.MiRidesUtilities;
 /*
  * Class:		Car
  * Description:	The class represents a car in a ride sharing system. 
- * Author:		Rodney Cockertru
+ * Author:		Ian Nguyen
  */
 public class Car {
 	// Car attributes
@@ -17,21 +19,33 @@ public class Car {
 	private String model;
 	private String driverName;
 	private int passengerCapacity;
+	private double bookingFee;
+	private double bookingCalculation;
 
 	// Tracking bookings
 	private Booking[] currentBookings;
 	private Booking[] pastBookings;
+	@SuppressWarnings("unused")
 	private boolean available;
 	private int bookingSpotAvailable = 0;
 	private double tripFee = 0;
 
 	// Constants
-	private final double STANDARD_BOOKING_FEE = 1.5;
 	private final int MAXIUM_PASSENGER_CAPACITY = 10;
 	private final int MINIMUM_PASSENGER_CAPACITY = 1;
 
-	public Car(String regNo, String make, String model, String driverName, int passengerCapacity) {
+	// Method used to create standard cars
+	public Car(String regNo, String make, String model, String driverName, int passengerCapacity) throws InvalidId {
+		this(regNo, make, model, driverName, passengerCapacity, 1.5, 0.3);
+	}
+
+	// Method used to create silver service cars
+	public Car(String regNo, String make, String model, String driverName, int passengerCapacity, double bookingFee,
+			double feeCalc) throws InvalidId {
 		setRegNo(regNo); // Validates and sets registration number
+		if (this.regNo.equalsIgnoreCase("invalid")) {
+			throw new InvalidId("Error - Invalid Registration number.");
+		}
 		setPassengerCapacity(passengerCapacity); // Validates and sets passenger capacity
 
 		this.make = make;
@@ -40,6 +54,8 @@ public class Car {
 		available = true;
 		currentBookings = new Booking[5];
 		pastBookings = new Booking[10];
+		this.bookingCalculation = feeCalc;
+		this.bookingFee = bookingFee;
 	}
 
 	/*
@@ -63,24 +79,38 @@ public class Car {
 	 * Booking six cars
 	 */
 
-	public boolean book(String firstName, String lastName, DateTime required, int numPassengers) {
+	public boolean book(String firstName, String lastName, DateTime required, int numPassengers) throws InvalidBooking {
 		boolean booked = false;
 		// Does car have five bookings
-		available = bookingAvailable();
-		boolean dateAvailable = notCurrentlyBookedOnDate(required);
+		// available = bookingAvailable();
+		if (!bookingAvailable()) {
+			throw new InvalidBooking("Error - The car is currently completely booked.");
+		}
+
+		// boolean dateAvailable = notCurrentlyBookedOnDate(required);
+		if (!notCurrentlyBookedOnDate(required)) {
+			throw new InvalidBooking("Error - The car is currently booked on this date.");
+		}
 		// Date is within range, not in past and within the next week
-		boolean dateValid = dateIsValid(required);
+		// boolean dateValid = dateIsValid(required);
+		if (!dateIsValid(required)) {
+			throw new InvalidBooking("Error - The input date is in the past, or too far in advance.");
+		}
+
 		// Number of passengers does not exceed the passenger capacity and is not zero.
-		boolean validPassengerNumber = numberOfPassengersIsValid(numPassengers);
+		// boolean validPassengerNumber = numberOfPassengersIsValid(numPassengers);
+		if (!numberOfPassengersIsValid(numPassengers)) {
+			throw new InvalidBooking("Error - The number of passengers is invalid.");
+		}
 
 		// Booking is permissible
-		if (available && dateAvailable && dateValid && validPassengerNumber) {
-			tripFee = STANDARD_BOOKING_FEE;
-			Booking booking = new Booking(firstName, lastName, required, numPassengers, this);
-			currentBookings[bookingSpotAvailable] = booking;
-			bookingSpotAvailable++;
-			booked = true;
-		}
+		// if (available && dateAvailable && dateValid && validPassengerNumber) {
+		tripFee = this.bookingFee;
+		Booking booking = new Booking(firstName, lastName, required, numPassengers, this);
+		currentBookings[bookingSpotAvailable] = booking;
+		bookingSpotAvailable++;
+		booked = true;
+		// }
 		return booked;
 	}
 
@@ -117,8 +147,11 @@ public class Car {
 	 * any booking date Return true ELSE Return false END
 	 * 
 	 */
-	public boolean isCarBookedOnDate(DateTime dateRequired) {
+	public boolean isCarBookedOnDate(DateTime dateRequired) throws InvalidDate {
 		boolean carIsBookedOnDate = false;
+		if (!DateUtilities.dateIsNotInPast(dateRequired)) {
+			throw new InvalidDate("Error - Date is in the past.");
+		}
 		for (int i = 0; i < currentBookings.length; i++) {
 			if (currentBookings[i] != null) {
 				if (DateUtilities.datesAreTheSame(dateRequired, currentBookings[i].getBookingDate())) {
@@ -168,7 +201,6 @@ public class Car {
 		sb.append(this.carStringDetails());
 		sb.append(this.printBookingFee());
 		sb.append(this.printBookingID());
-
 		return sb.toString();
 	}
 
@@ -210,9 +242,9 @@ public class Car {
 
 		// call complete booking on Booking object
 		// double kilometersTravelled = Math.random()* 100;
-		double fee = kilometers * (STANDARD_BOOKING_FEE * 0.3);
+		double fee = kilometers * (this.bookingFee * this.bookingCalculation);
 		tripFee += fee;
-		booking.completeBooking(kilometers, fee, STANDARD_BOOKING_FEE);
+		booking.completeBooking(kilometers, fee, this.bookingFee);
 		// add booking to past bookings
 		for (int i = 0; i < pastBookings.length; i++) {
 			if (pastBookings[i] == null) {
@@ -357,6 +389,7 @@ public class Car {
 		}
 	}
 
+	// Returns the current and past bookings as a list.
 	public String printBookings() {
 		StringBuilder currentBookings = new StringBuilder();
 		if (this.hasBookings(this.currentBookings)) {
@@ -381,6 +414,7 @@ public class Car {
 		return currentBookings.toString() + pastBookings.toString();
 	}
 
+	// Returns the cars details as a string.
 	public String carStringDetails() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(regNo + ":" + make + ":" + model);
@@ -396,6 +430,7 @@ public class Car {
 		return sb.toString();
 	}
 
+	// Returns the booking ID's as a string.
 	public String printBookingID() {
 		StringBuilder sb = new StringBuilder();
 		if (this.hasBookings(this.currentBookings)) {
@@ -415,10 +450,12 @@ public class Car {
 		return sb.toString();
 	}
 
+	// Returns the booking fee as a string.
 	public String printBookingFee() {
-		return ":" + this.STANDARD_BOOKING_FEE + ":";
+		return ":" + this.bookingFee + ":";
 	}
 
+	// Returns a list of all the car details.
 	public String getCarDetails() {
 		StringBuilder sb = new StringBuilder();
 
@@ -428,6 +465,7 @@ public class Car {
 
 		sb.append(String.format("%-15s %s\n", "Driver Name:", driverName));
 		sb.append(String.format("%-15s %s\n", "Capacity:", passengerCapacity));
+		sb.append(String.format("%-15s %s\n", "Standard Fee:", bookingFee));
 
 		if (bookingAvailable()) {
 			sb.append(String.format("%-15s %s\n", "Available:", "YES"));
@@ -437,22 +475,13 @@ public class Car {
 		return sb.toString();
 	}
 
+	// Returns a string of the car details. Used for saving to file.
 	public String stringToSave() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SDCAR:");
-		sb.append(regNo + ":" + make + ":" + model);
-		if (driverName != null) {
-			sb.append(":" + driverName);
-		}
-		sb.append(":" + passengerCapacity);
-		if (bookingAvailable()) {
-			sb.append(":" + "YES");
-		} else {
-			sb.append(":" + "NO");
-		}
-
+		sb.append(this.carStringDetails());
 		sb.append(this.printBookingFee());
-
 		return sb.toString();
 	}
+
 }

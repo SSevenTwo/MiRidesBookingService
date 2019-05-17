@@ -1,6 +1,6 @@
 package exceptions;
 
-public class InvalidBooking extends RuntimeException {
+public class InvalidBooking extends Exception {
 
 	public InvalidBooking(String message) {
 		super(message);

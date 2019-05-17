@@ -1,29 +1,52 @@
 package cars;
 
+import exceptions.InvalidBooking;
+import exceptions.InvalidBookingFee;
+import exceptions.InvalidId;
+import exceptions.InvalidRefreshments;
 import utilities.DateTime;
 import utilities.DateUtilities;
-import utilities.MiRidesUtilities;
 
+/*
+ * Class:		SilverServiceCar
+ * Description:	The class represents a silver service car in a ride sharing system. 
+ * Author:		Ian Nguyen
+ */
 public class SilverServiceCar extends Car {
 
-	private double bookingFee;
 	private String[] refreshments;
 
+	// Creates SS Car
 	public SilverServiceCar(String regNo, String make, String model, String driverName, int passengerCapacity,
-			double bookingFee, String[] refreshments) {
-		super(regNo, make, model, driverName, passengerCapacity);
-		this.bookingFee = bookingFee;
+			double bookingFee, String[] refreshments) throws InvalidRefreshments, InvalidId, InvalidBookingFee {
+		super(regNo, make, model, driverName, passengerCapacity, bookingFee, 0.4);
+
+		// Validates booking fee
+		if (bookingFee < 3.0) {
+			throw new InvalidBookingFee("Error - Booking fee for Silver Service Car must be at least $3.0\n");
+		}
+		// Validates number of Refreshments
+		if (refreshments.length < 3) {
+			throw new InvalidRefreshments("Error - There must be more than 2 refreshments.\n");
+		}
+
+		// Validates that no refreshments are the same
+		if (this.checkForDuplicateItem(refreshments)) {
+			throw new InvalidRefreshments("Error - There must not be duplicate refreshments.\n");
+		}
 		this.refreshments = refreshments;
 	}
 
+	// Booking a SS car. Ensures within 3 days.
 	@Override
-	public boolean book(String firstName, String lastName, DateTime required, int numPassengers) {
+	public boolean book(String firstName, String lastName, DateTime required, int numPassengers) throws InvalidBooking {
 		if (DateUtilities.dateIsNotMoreThanXDays(required, 3) && DateUtilities.dateIsNotInPast(required)) {
 			return super.book(firstName, lastName, required, numPassengers);
 		}
 		return false;
 	}
 
+	// Create toString of SS car
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
@@ -35,11 +58,7 @@ public class SilverServiceCar extends Car {
 		return sb.toString();
 	}
 
-	@Override
-	public String printBookingFee() {
-		return ":" + this.bookingFee + ":";
-	}
-
+	// Get details of SS car
 	@Override
 	public String getDetails() {
 		StringBuilder sb = new StringBuilder();
@@ -49,12 +68,10 @@ public class SilverServiceCar extends Car {
 		return sb.toString();
 	}
 
+	// Returns list of refreshments
 	public String printRefreshments() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Refreshments Available\n");
-		// sb.append(String.format("%-15s %s\n", "Item 1", "Mints"));
-		// sb.append(String.format("%-15s %s\n", "Item 2", "Orange Juice"));
-		// sb.append(String.format("%-15s %s\n\n", "Item 3", "Chocolate Bar"));
 		for (int i = 0, j = 1; i < this.refreshments.length; i++, j++) {
 			sb.append(String.format("%-15s %s\n", "Item " + j, refreshments[i]));
 		}
@@ -62,17 +79,16 @@ public class SilverServiceCar extends Car {
 		return sb.toString();
 	}
 
+	// Returns string of refreshments
 	public String printStringRefreshments() {
 		StringBuilder sb = new StringBuilder();
-		// sb.append(String.format("%-15s %s\n", "Item 1", "Mints"));
-		// sb.append(String.format("%-15s %s\n", "Item 2", "Orange Juice"));
-		// sb.append(String.format("%-15s %s\n\n", "Item 3", "Chocolate Bar"));
 		for (int i = 0, j = 1; i < this.refreshments.length; i++, j++) {
 			sb.append(String.format("%s %s:", "Item " + j, refreshments[i]));
 		}
 		return sb.toString();
 	}
 
+	// Returns a string of the car details. Used for saving to file.
 	@Override
 	public String stringToSave() {
 		StringBuilder sb = new StringBuilder();
@@ -82,5 +98,17 @@ public class SilverServiceCar extends Car {
 		sb.append(this.printStringRefreshments());
 
 		return sb.toString();
+	}
+
+	// Checks whether there are duplicate refreshments
+	private boolean checkForDuplicateItem(String[] refreshments) {
+		for (int i = 0; i < refreshments.length; i++) {
+			for (int j = 0; j < refreshments.length; j++) {
+				if (i != j && refreshments[i].equalsIgnoreCase(refreshments[j])) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }
