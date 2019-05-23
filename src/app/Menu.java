@@ -101,7 +101,7 @@ public class Menu {
 				System.out.print("Enter number of passengers: ");
 				numPassengers = promptForPassengerNumbers();
 			} catch (NumberFormatException e) {
-				System.out.println("Error - Input is not a number.\\n");
+				System.out.println("Error - Input is not a number.\n");
 				return;
 			}
 
@@ -131,12 +131,18 @@ public class Menu {
 				} catch (InvalidBookingFee e) {
 					System.out.print(e.getMessage());
 					return;
+				} catch (NullPointerException e) {
+					System.out.println("An unknown error has occured.");
+				} catch (StringIndexOutOfBoundsException e) {
+					System.out.println("Error - No input was entered.");
+				} catch(NumberFormatException e) {
+					System.out.println("Error - You must enter a number.");
 				}
 
 			} else if (!serviceType.equalsIgnoreCase("SD") && !serviceType.equalsIgnoreCase("SS")) {
 				System.out.print("Error - Invalid service type.\n");
 			} else {
-				System.out.println("Error - Already exists in the system\\n");
+				System.out.println("Error - Already exists in the system \n");
 			}
 		}
 	}
@@ -154,10 +160,10 @@ public class Menu {
 			int year = Integer.parseInt(dateEntered.substring(6));
 
 			DateTime dateRequired = new DateTime(day, month, year);
-
+			
 			if (!DateUtilities.dateIsNotInPast(dateRequired)
 					|| !DateUtilities.dateIsNotMoreThanXDays(dateRequired, 7)) {
-				System.out.println("Date is invalid, must be within the coming week.");
+				System.out.println("Error - Date is invalid, must be within the coming week.");
 				return false;
 			}
 
@@ -189,11 +195,13 @@ public class Menu {
 				System.out.println("There are no available cars on this date.");
 			}
 		} catch (NumberFormatException e) {
-			System.out.println(e.getMessage() + "\n");
+			System.out.println("Error - A number must be entered. \n");
 			return false;
 		} catch (InvalidDate e) {
 			System.out.println(e.getMessage() + "\n");
 			return false;
+		} catch (StringIndexOutOfBoundsException e) {
+			System.out.println("Error - No input was entered.");
 		}
 		return true;
 	}
@@ -225,7 +233,7 @@ public class Menu {
 				System.out.println(e.getMessage() + "\n");
 			}
 		} else {
-
+			try {
 			System.out.print("Enter First Name:");
 			String firstName = console.nextLine();
 			System.out.print("Enter Last Name:");
@@ -237,6 +245,9 @@ public class Menu {
 				System.out.println(result);
 			} else {
 				System.out.println("Error: Booking not found.");
+			}
+			} catch(NumberFormatException e) {
+				System.out.println("Error - You must enter a number.");
 			}
 		}
 

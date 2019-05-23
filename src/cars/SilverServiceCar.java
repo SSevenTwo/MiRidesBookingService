@@ -19,11 +19,11 @@ public class SilverServiceCar extends Car {
 	// Creates SS Car
 	public SilverServiceCar(String regNo, String make, String model, String driverName, int passengerCapacity,
 			double bookingFee, String[] refreshments) throws InvalidRefreshments, InvalidId, InvalidBookingFee {
-		super(regNo, make, model, driverName, passengerCapacity, bookingFee, 0.4);
+		super(regNo, make, model,driverName,passengerCapacity);
 
 		// Validates booking fee
 		if (bookingFee < 3.0) {
-			throw new InvalidBookingFee("Error - Booking fee for Silver Service Car must be at least $3.0\n");
+			throw new InvalidBookingFee("Error - Booking fee for Silver Service Car must be at least $3.00\n");
 		}
 		// Validates number of Refreshments
 		if (refreshments.length < 3) {
@@ -34,6 +34,8 @@ public class SilverServiceCar extends Car {
 		if (this.checkForDuplicateItem(refreshments)) {
 			throw new InvalidRefreshments("Error - There must not be duplicate refreshments.\n");
 		}
+		super.setBookingCalculation(0.4);
+		super.setBookingFee(bookingFee);
 		this.refreshments = refreshments;
 	}
 

@@ -36,12 +36,7 @@ public class Car {
 
 	// Method used to create standard cars
 	public Car(String regNo, String make, String model, String driverName, int passengerCapacity) throws InvalidId {
-		this(regNo, make, model, driverName, passengerCapacity, 1.5, 0.3);
-	}
-
-	// Method used to create silver service cars
-	public Car(String regNo, String make, String model, String driverName, int passengerCapacity, double bookingFee,
-			double feeCalc) throws InvalidId {
+		//this(regNo, make, model, driverName, passengerCapacity, 1.5, 0.3);
 		setRegNo(regNo); // Validates and sets registration number
 		if (this.regNo.equalsIgnoreCase("invalid")) {
 			throw new InvalidId("Error - Invalid Registration number.");
@@ -54,8 +49,8 @@ public class Car {
 		available = true;
 		currentBookings = new Booking[5];
 		pastBookings = new Booking[10];
-		this.bookingCalculation = feeCalc;
-		this.bookingFee = bookingFee;
+		this.bookingCalculation = 0.3;
+		this.bookingFee = 1.5;
 	}
 
 	/*
@@ -82,7 +77,6 @@ public class Car {
 	public boolean book(String firstName, String lastName, DateTime required, int numPassengers) throws InvalidBooking {
 		boolean booked = false;
 		// Does car have five bookings
-		// available = bookingAvailable();
 		if (!bookingAvailable()) {
 			throw new InvalidBooking("Error - The car is currently completely booked.");
 		}
@@ -92,25 +86,25 @@ public class Car {
 			throw new InvalidBooking("Error - The car is currently booked on this date.");
 		}
 		// Date is within range, not in past and within the next week
-		// boolean dateValid = dateIsValid(required);
 		if (!dateIsValid(required)) {
 			throw new InvalidBooking("Error - The input date is in the past, or too far in advance.");
 		}
 
 		// Number of passengers does not exceed the passenger capacity and is not zero.
-		// boolean validPassengerNumber = numberOfPassengersIsValid(numPassengers);
 		if (!numberOfPassengersIsValid(numPassengers)) {
 			throw new InvalidBooking("Error - The number of passengers is invalid.");
 		}
-
+		
+		// Validates the name
+		if (!(firstName.length() >= 3) || !(lastName.length() >= 3)) {
+			throw new InvalidBooking("Error - The first and last name must be of at least 3 characters.");
+		}
 		// Booking is permissible
-		// if (available && dateAvailable && dateValid && validPassengerNumber) {
 		tripFee = this.bookingFee;
 		Booking booking = new Booking(firstName, lastName, required, numPassengers, this);
 		currentBookings[bookingSpotAvailable] = booking;
 		bookingSpotAvailable++;
 		booked = true;
-		// }
 		return booked;
 	}
 
@@ -216,6 +210,16 @@ public class Car {
 	public double getTripFee() {
 		return tripFee;
 	}
+	
+	//Required setters
+	
+	protected void setBookingFee(double bookingFee) {
+		this.bookingFee = bookingFee;
+	}
+
+	protected void setBookingCalculation(double bookingCalculation) {
+		this.bookingCalculation = bookingCalculation;
+	}
 
 	/*
 	 * Checks to see if any past bookings have been recorded
@@ -229,6 +233,8 @@ public class Car {
 		}
 		return found;
 	}
+
+
 
 	/*
 	 * Processes the completion of the booking

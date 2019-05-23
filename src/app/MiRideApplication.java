@@ -143,7 +143,7 @@ public class MiRideApplication {
 		// Search for car with registration number
 		for (int i = 0; i < cars.length; i++) {
 			if (cars[i] != null) {
-				if (cars[i].getRegistrationNumber().equals(registrationNumber)) {
+				if (cars[i].getRegistrationNumber().equalsIgnoreCase(registrationNumber)) {
 					car = cars[i];
 					break;
 				}
@@ -165,7 +165,7 @@ public class MiRideApplication {
 		// Search for car with registration number
 		for (int i = 0; i < cars.length; i++) {
 			if (cars[i] != null) {
-				if (cars[i].getRegistrationNumber().equals(registrationNumber)) {
+				if (cars[i].getRegistrationNumber().equalsIgnoreCase(registrationNumber)) {
 					car = cars[i];
 					break;
 				}
@@ -185,7 +185,7 @@ public class MiRideApplication {
 	public String displaySpecificCar(String regNo) {
 		for (int i = 0; i < cars.length; i++) {
 			if (cars[i] != null) {
-				if (cars[i].getRegistrationNumber().equals(regNo)) {
+				if (cars[i].getRegistrationNumber().equalsIgnoreCase(regNo)) {
 					return cars[i].getDetails();
 				}
 			}
@@ -351,7 +351,7 @@ public class MiRideApplication {
 
 		for (int i = 0; i < cars.length; i++) {
 			if (cars[i] != null) {
-				if (cars[i].getRegistrationNumber().equals(regNo)) {
+				if (cars[i].getRegistrationNumber().equalsIgnoreCase(regNo)) {
 					car = cars[i];
 					return car;
 				}
