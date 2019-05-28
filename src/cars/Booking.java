@@ -131,6 +131,31 @@ public class Booking {
 					+ date.getEightDigitDate();
 		}
 	}
+	
+	/*ALGORITHIM of generateId method
+	*BEGIN
+	*	GET registration number, first and last name, date
+	*	IF first name or last name is less than 3 letters
+	*		return Invalid ID
+	*	END IF
+	*	ELSE
+	*		CONCATINATE Registration number, first 3 letters of name and surname, date
+	*	RETURN STRING
+	*	END ELSE
+	*END
+	*
+	*TEST
+	*	GET registration number, first and last name, date
+	*	CHECK whether first name or last name is less than 3. It is not
+	*	RETURN Registration number, first 3 letters of name and surname, date as string
+	*END
+	*
+	*TEST
+	*	GET booking fee value of 1.5
+	*	GET kilometers traveled of 30
+	*	COMPUTE booking fee + 30% * 1.5 * Kilometers traveled
+	*	RETURN result of 15
+	*/
 
 	/*
 	 * Ensures the name is more than three characters

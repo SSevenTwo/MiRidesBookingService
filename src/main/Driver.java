@@ -7,10 +7,15 @@ import exceptions.InvalidDate;
 import exceptions.InvalidId;
 import exceptions.InvalidRefreshments;
 
-public class Driver {
+/*
+ * Class:			Driver
+ * Description:		Contains the main method. Runs the program.
+ * Author:			Ian Nguyen - S3788210
+ */
 
+public class Driver {
+	// Main method runs the program.
 	public static void main(String[] args)
-			throws InvalidBooking, InvalidRefreshments, InvalidId, InvalidDate, InvalidBookingFee 
 	{
 		Menu menu = new Menu();
 		menu.run();

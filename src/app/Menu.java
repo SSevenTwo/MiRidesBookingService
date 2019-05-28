@@ -25,11 +25,15 @@ public class Menu {
 	/*
 	 * Runs the menu in a loop until the user decides to exit the system.
 	 */
-	public void run() throws InvalidBooking, InvalidRefreshments, InvalidId, InvalidDate, InvalidBookingFee {
+	public void run() {
 		final int MENU_ITEM_LENGTH = 2;
 		String input;
 		String choice = "";
-		System.out.println(application.startUpLoad());
+		try {
+			System.out.println(application.startUpLoad());
+		} catch (NumberFormatException | InvalidRefreshments | InvalidId | InvalidBookingFee e) {
+			System.out.println(e.getMessage());
+		}
 		do {
 			printMenu();
 
@@ -61,7 +65,11 @@ public class Menu {
 					this.searchAvailableCars();
 					break;
 				case "SD":
-					application.seedData();
+					try {
+						application.seedData();
+					} catch (InvalidBooking | InvalidRefreshments | InvalidId | InvalidBookingFee e) {
+						System.out.println(e.getMessage());
+					}
 					break;
 				case "EX":
 					choice = "EX";
@@ -76,11 +84,41 @@ public class Menu {
 
 		} while (choice != "EX");
 	}
+	
+	/* 	ALGORITHM of RUN menu method 
+	*	BEGIN
+	*		PRINT menu items
+	*		IF input is CC
+	*			RUN create car method
+	*		IF input is BC
+	*			RUN book car method
+	*		IF input is CB
+	*			RUN complete booking method
+	*		IF input is DA
+	*			RUN display all cars method
+	*		IF input is SS
+	*			RUN search specific car method
+	*		IF input is SD
+	*			RUN seed data method
+	*		IF input is SA
+	*			PRINT "Function is not available"
+	*		IF input is EX
+	*			EXIT the program
+	*		ELSE 
+	*			PRINT user input is invalid
+	*	END
+	*
+	*	TEST
+	*		PRINT menu
+	*		INPUT is equal to BC, the user is asked to book a car.
+	*		PRINT menu
+	*		INPUT is equal to CC, the user is asked to create a car.
+	*/
 
 	/*
 	 * Creates cars for use in the system available or booking.
 	 */
-	private void createCar() throws InvalidRefreshments, InvalidId, InvalidBookingFee {
+	private void createCar(){
 		String id = "", make, model, driverName, serviceType;
 		int numPassengers = 0;
 
@@ -111,8 +149,14 @@ public class Menu {
 			boolean result = application.checkIfCarExists(id);
 
 			if (!result && serviceType.equalsIgnoreCase("SD")) {
-				String carRegistrationNumber = application.createCar(id, make, model, driverName, numPassengers);
-				System.out.println(carRegistrationNumber);
+				String carRegistrationNumber;
+				try {
+					carRegistrationNumber = application.createCar(id, make, model, driverName, numPassengers);
+					System.out.println(carRegistrationNumber);
+				} catch (InvalidId e) {
+					System.out.println(e.getMessage());
+				}
+				
 			} else if (!result && serviceType.equalsIgnoreCase("SS")) {
 				System.out.print("Enter Standard Fee: ");
 				double bookingFee = Double.parseDouble(console.nextLine());
@@ -150,7 +194,7 @@ public class Menu {
 	/*
 	 * Book a car by finding available cars for a specified date.
 	 */
-	private boolean book() throws InvalidBooking, InvalidDate {
+	private boolean book(){
 		System.out.println("Enter date car required: ");
 		System.out.println("(format DD/MM/YYYY)");
 		try {
@@ -209,7 +253,7 @@ public class Menu {
 	/*
 	 * Complete bookings found by either registration number or booking date.
 	 */
-	private void completeBooking() throws InvalidDate {
+	private void completeBooking(){
 		System.out.print("Enter Registration or Booking Date:");
 		String response = console.nextLine();
 
@@ -334,7 +378,7 @@ public class Menu {
 	}
 
 	// Displays all available cars at a given date.
-	private void searchAvailableCars() throws InvalidDate {
+	private void searchAvailableCars() {
 		System.out.print("Enter type (SD/SS): ");
 		String serviceType = console.nextLine();
 		if (!serviceType.equalsIgnoreCase("SD") && !serviceType.equalsIgnoreCase("SS")) {

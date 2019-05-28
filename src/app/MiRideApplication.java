@@ -42,6 +42,25 @@ public class MiRideApplication {
 		}
 		return "Error: Already exists in the system.";
 	}
+	
+	/*
+	 * ALGORITHM of Create SD Car Method 
+	 * BEGIN 
+	 * 	RECIEVE registration number, make, model, driver name, no. of passengers 
+	 * 	IF id is not valid
+	 * 		RETURN error
+	 * 	ELSE IF car does not already exist
+	 * 		ADD car to car array
+	 * 	RETURN "Car added successfully"
+	 * END
+	 *
+	 * TEST 
+	 * RECEIVE registration number, make, model, driver name, no. of passengers 
+	 * CHECK id is valid
+	 * CHECK id is not already in the system
+	 * ADD car to car array
+	 * RETURN "Car added successfully"
+	 */
 
 	// Create Silver Service Car
 	public String createSSCar(String id, String make, String model, String driverName, int numPassengers,

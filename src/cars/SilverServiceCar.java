@@ -113,4 +113,30 @@ public class SilverServiceCar extends Car {
 		}
 		return false;
 	}
+	/*
+	 * ALGORITHM of checkForDuplicateItem method above 
+	 * BEGIN 
+	 * 	RECIEVE refreshments array
+	 *  START LOOP
+	 *  	GRAB item from refreshments array
+	 *  	COMPARE item grabbed to other items in array
+	 *  	IF items are the same
+	 *  		RETURN TRUE
+	 *  ELSE IF not at the end of the refreshments array
+	 *   	GRAB next item in refreshments array
+	 *   	REPEAT LOOP
+	 *   ELSE
+	 *   	RETURN false
+	 * 
+	 * TEST 
+	 * RECEIVE refreshments array
+	 * GRAB 1st item
+	 * COMPARE 1st item to every other item
+	 * GRAB 2nd item
+	 * COMPARE 2nd item to every other item
+	 * GRAB 3rd item
+	 * COMPARE 3rd item to every other item
+	 * RETURN false
+	 */
+	
 }

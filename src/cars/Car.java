@@ -36,7 +36,6 @@ public class Car {
 
 	// Method used to create standard cars
 	public Car(String regNo, String make, String model, String driverName, int passengerCapacity) throws InvalidId {
-		//this(regNo, make, model, driverName, passengerCapacity, 1.5, 0.3);
 		setRegNo(regNo); // Validates and sets registration number
 		if (this.regNo.equalsIgnoreCase("invalid")) {
 			throw new InvalidId("Error - Invalid Registration number.");
@@ -53,27 +52,7 @@ public class Car {
 		this.bookingFee = 1.5;
 	}
 
-	/*
-	 * Checks to see if the booking is permissible such as a valid date, number of
-	 * passengers, and general availability. Creates the booking only if conditions
-	 * are met and assigns the trip fee to be equal to the standard booking fee.
-	 */
-
-	/*
-	 * ALGORITHM BEGIN CHECK if car has five booking CHECK if car has a booking on
-	 * date requested CHECK if the date requested is in the past. CHECK if the
-	 * number of passengers requested exceeds the capacity of the car. IF any checks
-	 * fail return false to indicate the booking operation failed ELSE CREATE the
-	 * booking ADD the booking to the current booking array UPDATE the available
-	 * status if there are now five current bookings. RETURN true to indicate the
-	 * success of the booking. END
-	 * 
-	 * TEST Booking a car to carry 0, 10, & within/without passenger capacity.
-	 * Booking car on date prior to today Booking a car on a date that is more than
-	 * 7 days in advance. Booking car on a date for which it is already booked
-	 * Booking six cars
-	 */
-
+	//Method for booking the car
 	public boolean book(String firstName, String lastName, DateTime required, int numPassengers) throws InvalidBooking {
 		boolean booked = false;
 		// Does car have five bookings
@@ -107,6 +86,34 @@ public class Car {
 		booked = true;
 		return booked;
 	}
+	
+	/*
+	 * ALGORITHM of booking method above 
+	 * BEGIN 
+	 * 	RECIEVE booking information 
+	 *  IF 	car is not available to book
+	 *  	THROW exception
+	 *  ELSE IF booked on the current date
+	 *  	THROW exception
+	 *  ELSE IF booking date is not valid
+	 *  	THROW exception
+	 *  ELSE IF number of passengers is not valid
+	 *  	THROW exception
+	 *  ELSE IF first or last name is less than 3
+	 *  	THROW exception
+	 *  ELSE
+	 * 	CREATE new booking object 
+	 * 	ADD booking object to next available position in Booking Array
+	 * END
+	 * 
+	 * TEST 
+	 * RECEIVE booking information 
+	 * CHECK if car is available to book, not booked on current date, date is valid, if no. of passengers valid
+	 * 		 and if the first and last name is less than 3. No to all.
+	 * CREATE new booking object 
+	 * ADD booking object to empty spot in booking array
+	 * RETURN successful booking!
+	 */
 
 	/*
 	 * Completes a booking based on the name of the passenger and the booking date.
