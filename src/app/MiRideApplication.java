@@ -25,7 +25,6 @@ public class MiRideApplication {
 	private String[] availableCars;
 
 	public MiRideApplication() {
-		// seedData();
 	}
 
 	// Create Standard Car
