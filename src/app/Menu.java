@@ -13,7 +13,7 @@ import utilities.DateUtilities;
 /*
  * Class:		Menu
  * Description:	The class a menu and is used to interact with the user. 
- * Author:		Ian Nguyen.
+ * Author:		Ian Nguyen
  */
 public class Menu {
 	private Scanner console = new Scanner(System.in);
